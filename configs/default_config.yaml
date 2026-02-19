@@ -1,0 +1,150 @@
+# default_config.yaml
+# Default parameters for the PsychAD GRN Atlas analysis pipeline.
+# Override any value via CLI arguments or a custom config file.
+#
+# All paths are relative to the repository root.
+# Replace placeholder paths with your actual data locations before running.
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PATHS
+# ─────────────────────────────────────────────────────────────────────────────
+paths:
+  # Input data
+  data_dir: "data/"
+  h5ad_file: "data/h5ad/psychad.h5ad"            # primary expression h5ad
+
+  # pySCENIC reference files
+  tf_list: "data/pyscenic/allTFs_hg38.txt"       # human transcription factor list
+  scenic_db_glob: "data/pyscenic/*.feather"       # cisTarget feather databases
+  motif_file: "data/pyscenic/motifs-v9-nr.hgnc-m0.001-o0.0.tbl"
+
+  # Pathway enrichment
+  go_gmt: "data/pathways/GO_Biological_Process_2023.gmt"
+
+  # Optional filtering reference
+  pc_genes_file: "data/metadata/protein_coding_genes.csv"
+
+  # R executable (set to full path if Rscript is not on $PATH)
+  rscript_path: "Rscript"
+  r_script: "r/dreamlet_analysis.R"
+
+  # Outputs
+  output_dir: "results/"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# GRN INFERENCE  (grn_inference.py)
+# ─────────────────────────────────────────────────────────────────────────────
+grn_inference:
+  phenotypes:
+    - "AD"
+    - "CTRL"
+    - "RES"
+  cohorts:
+    - "MSSM"
+    - "RADC"
+    - "ROSMAP"
+  n_runs: 5              # GRNboost2 runs per phenotype; edge must appear in all runs
+  seed_start: 42         # base seed; actual seeds: 42, 43, 44, 45, 46
+  n_workers: 20          # CPU workers for pySCENIC
+
+  # Regulon quality filters (applied after cisTarget)
+  nes_threshold: 3.0     # minimum NES for motif enrichment significance
+  min_targets: 10        # minimum target genes per regulon
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# AUCELL SCORING  (aucell_scoring.py)
+# ─────────────────────────────────────────────────────────────────────────────
+aucell_scoring:
+  celltype_col: "subclass"    # cell type annotation column in h5ad obs
+  n_workers: 20
+  concordance_method: "pearson"  # pearson | jaccard | rss
+
+  # Cohort labels for cross-cohort concordance analysis
+  cohorts:
+    - "MSSM"
+    - "RADC"
+    - "ROSMAP"
+
+  # Stouffer meta-analysis weights (null = equal weights)
+  # Set to sqrt(n_cells) per cohort for sample-size-weighted combining
+  stouffer_weights: null
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# REGULON SPECIFICITY  (regulon_specificity.py)
+# ─────────────────────────────────────────────────────────────────────────────
+regulon_specificity:
+  celltype_col: "subclass"
+  top_n: 13              # top regulons returned per cell type after RRA
+  rra_method: "RRA"      # RRA | mean | median
+  score_threshold: 0.05  # maximum RRA rho p-value for inclusion
+  rss_top_n: 5           # labeled regulons per cell type in RSS scatter panels
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# DREAMLET ANALYSIS  (dreamlet_analysis.py → r/dreamlet_analysis.R)
+# ─────────────────────────────────────────────────────────────────────────────
+dreamlet_analysis:
+  # Clinical variables to test as the primary effect in the mixed model:
+  #   ~ {contrast} + sex + scale(age) + log(n_genes) + Brain_bank + (1|Subject)
+  contrasts:
+    - "AD"        # case-control diagnosis (binary)
+    - "Braak"     # Braak NFT stage (0–6)
+    - "CERAD"     # CERAD neuritic plaque score (1–4)
+    - "dementia"  # dementia status at death (binary)
+    - "n07x"      # tau/amyloid cognitive resilience score
+
+  anno_levels:
+    - "subclass"  # 27 cell subtypes
+    - "class"     # 6 major cell classes
+
+  subject_col: "SubID"   # donor identifier column (random effect grouping)
+
+  # Post-processing
+  fdr_threshold: 0.05
+  filter_sex_chromosomes: true  # remove chrX/chrY regulons
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# FISHER'S ENRICHMENT  (fishers_enrichment.py)
+# ─────────────────────────────────────────────────────────────────────────────
+fishers_enrichment:
+  # Clinical contrasts to test (subset of dreamlet contrasts)
+  contrasts:
+    - "AD"
+    - "Braak"
+    - "CERAD"
+    - "dementia"
+
+  fdr_threshold: 0.05
+  top_n_per_celltype: 3  # top regulons highlighted per cell type
+
+  # DEG directions tested in the contingency table
+  directions:
+    - "up"           # genes with logFC > 0
+    - "down"         # genes with logFC < 0
+    - "significant"  # all genes with FDR < threshold
+
+  alternative: "greater"  # one-tailed Fisher test
+  background: "HVG"       # gene universe: highly variable genes from h5ad
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# NETWORK REWIRING  (network_rewiring.py)
+# ─────────────────────────────────────────────────────────────────────────────
+network_rewiring:
+  # Edge filtering
+  top_edge_quantile: 0.75   # retain edges with importance >= 75th percentile
+  min_targets_after_filter: 10  # minimum TF edges after filtering
+
+  # GO enrichment
+  go_pval_threshold: 0.05
+  go_per_tf_terms: 6        # maximum GO terms shown per TF in bubble plots
+  ward_clustering: true     # order GO terms by Ward distance dendrogram
+
+  conditions:
+    - "AD"
+    - "CTRL"
+    - "RES"
