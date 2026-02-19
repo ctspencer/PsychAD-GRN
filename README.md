@@ -131,83 +131,6 @@ python -m psychad_grn.network_rewiring \
   --plot
 ```
 
----
-
-## Methods Reference
-
-### GRN Inference Parameters
-
-| Parameter | Value | Rationale |
-|-----------|-------|-----------|
-| Algorithm | GRNboost2 (arboreto 0.1.6) | Gradient boosting with better scalability than GENIE3 |
-| Runs per phenotype | 5 | Consensus across runs removes seed-dependent artefacts |
-| Edge threshold | 5/5 runs | Only edges appearing in ALL runs are retained |
-| Motif database | Human v9-nr, p < 0.001 | Conservative motif enrichment cutoff |
-| NES threshold | ≥ 3.0 | High-confidence motif enrichment |
-| Min regulon size | 10 targets | Minimum for meaningful AUCell scoring |
-| Cross-cohort | MSSM ∩ RADC ∩ ROSMAP | Only edges generalizing across all three brain banks |
-
-### Model Formula (dreamlet)
-
-For each regulon × cell type, the following linear mixed model is fit:
-
-```
-AUCell_score ~ clinical_var + sex + scale(age) + log(n_genes) + Brain_bank + (1|Subject)
-```
-
-`(1|Subject)` is a random intercept for donor, accounting for repeated
-measurements across cell types within each individual.
-Empirical Bayes shrinkage (limma) stabilizes variance estimates in cell
-types with few pseudobulk replicates.
-
-Clinical variables: AD (diagnosis), Braak (NFT stage), CERAD (plaque score),
-dementia (status), n07x (tau/amyloid resilience score).
-
-### Robust Rank Aggregation (RRA)
-
-For each cell type, TFs are independently ranked by three evidence sources:
-
-1. AUCell z-score — regulon activity enrichment in that cell type
-2. RSS score — regulon cell-type specificity (Jensen-Shannon divergence)
-3. Gene expression z-score — TF gene expression enrichment
-
-These three ranked lists are combined using RRA (Kolde et al. 2012, *Bioinformatics*),
-which assigns each TF a rho score via a beta distribution test.
-Only TFs with rho < 0.05 are reported.
-
-### Fisher's Exact Test Background
-
-The background gene universe is the set of highly variable genes (HVG)
-selected during SCENIC preprocessing — the same gene set used for GRN inference.
-This ensures that enrichment is measured relative to the genes that could
-plausibly be regulon targets, not the entire transcriptome.
-
-The 2×2 contingency table:
-
-|  | In regulon | Not in regulon |
-|--|--|--|
-| **Significant DEG** | a | b |
-| **Not DEG** | c | d |
-
-`a = regulon_targets ∩ directional_DEGs ∩ significant_DEGs`
-
-One-tailed Fisher test (`alternative='greater'`).
-FDR correction: Benjamini-Hochberg within each cell type × contrast group.
-
-### Network Edge Filtering
-
-1. Remove self-loops (TF → same gene)
-2. Retain top 25% of edges by importance score (quantile ≥ 0.75)
-3. Remove TFs with fewer than 10 remaining targets
-
-Centrality metrics (networkx 3.1): PageRank, degree centrality,
-betweenness centrality, closeness centrality.
-
-GO Biological Process enrichment (gseapy 1.0.5, GO BP 2023).
-GO terms ordered by Ward distance clustering on −log10(FDR).
-
----
-
 ## Repository Structure
 
 ```
@@ -238,14 +161,3 @@ psychad-grn-atlas/
 > Spencer CS. *Decoding Gene Regulatory Programs of Resilience and Pathogenesis
 > in Alzheimer's Disease.* PhD Dissertation, [Institution], [Year].
 
-**PsychAD Cohort:**
-> Hoffman GE, et al. *Single-nucleus transcriptome analysis of human brain immune
-> response in patients with severe COVID-19.* Genome Medicine 2021.
-
-**pySCENIC:**
-> Van de Sande B, et al. *A scalable SCENIC workflow for single-cell gene
-> regulatory network analysis.* Nature Protocols 2020.
-
-**dreamlet:**
-> Hoffman GE, et al. *dreamlet: Pseudobulk analysis of single-cell RNA-seq
-> data using linear mixed models.* bioRxiv 2023.
