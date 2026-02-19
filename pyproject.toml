@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "PsychAD-GRN"
+version = "0.1.0"
+description = "Gene regulatory network analysis of Alzheimer's disease and cognitive resilience in the PsychAD cohort"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+dependencies = [
+    "scanpy==1.9.3",
+    "anndata>=0.9",
+    "pandas>=2.0",
+    "numpy>=1.24,<2.0",
+    "scipy>=1.10",
+    "statsmodels>=0.14",
+    "loompy>=3.0",
+    "networkx==3.1",
+    "gseapy==1.0.5",
+    "pyscenic==0.12.1",
+    "arboreto==0.1.6",
+    "seaborn>=0.12",
+    "matplotlib>=3.7",
+    "adjustText>=0.8",
+    "pyyaml>=6.0",
+]
+
+[project.scripts]
+grn-inference       = "psychad_grn.grn_inference:main"
+aucell-scoring      = "psychad_grn.aucell_scoring:main"
+regulon-specificity = "psychad_grn.regulon_specificity:main"
+dreamlet-analysis   = "psychad_grn.dreamlet_analysis:main"
+fishers-enrichment  = "psychad_grn.fishers_enrichment:main"
+network-rewiring    = "psychad_grn.network_rewiring:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["psychad_grn*"]

@@ -1,0 +1,38 @@
+name: psychad-grn-env
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - r-base>=4.2
+  - r-optparse
+  - bioconductor-dreamlet
+  - bioconductor-singlecellexperiment
+  - bioconductor-zellkonverter
+  - bioconductor-limma
+  - pip:
+    - scanpy==1.9.3
+    - anndata>=0.9
+    - loompy>=3.0
+    - pandas>=2.0
+    - numpy>=1.24,<2.0
+    - scipy>=1.10
+    - statsmodels>=0.14
+    - networkx==3.1
+    - gseapy==1.0.5
+    - matplotlib>=3.7
+    - seaborn>=0.12
+    - adjustText>=0.8
+    - pyyaml>=6.0
+
+# NOTE: pySCENIC (0.12.1) and arboreto (0.1.6) require older anndata versions
+# and may conflict with scanpy 1.9.3. If you encounter dependency errors, create
+# a separate environment for GRN inference:
+#
+#   conda create -n psychad-scenic python=3.8
+#   pip install pyscenic==0.12.1 arboreto==0.1.6
+#
+# Then run grn_inference.py in that environment and all downstream steps
+# in this (psychad-grn) environment.

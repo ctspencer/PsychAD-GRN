@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+.venv/
+venv/
+env/
+
+# Data files — do not commit
+*.h5ad
+*.loom
+*.feather
+*.csv
+*.parquet
+*.tsv
+*.txt.gz
+*.h5
+
+# Results and outputs
+results/
+data/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# R
+.Rhistory
+.RData
+.Rproj.user/
+*.Rout
+*.rds
+*.RData
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
