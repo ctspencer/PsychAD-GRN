@@ -134,8 +134,8 @@ python -m psychad_grn.network_rewiring \
 ## Repository Structure
 
 ```
-psychad-grn-atlas/
-├── psychad_grn/
+PsychAD-GRN/
+├── atlas_forge/
 │   ├── grn_inference.py        # Analysis 1: pySCENIC GRN construction
 │   ├── aucell_scoring.py       # Analysis 2: AUCell + concordance
 │   ├── regulon_specificity.py  # Analysis 3: RSS + RRA
