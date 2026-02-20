@@ -13,7 +13,7 @@ The pipeline addresses six questions:
 1. **Which transcription factors regulate which genes?** (*GRN inference*)
 2. **How active is each regulon in each cell type?** (*AUCell scoring*)
 3. **Which regulons are cell-type–specific?** (*Regulon specificity and RRA*)
-4. **Which regulons change activity with disease severity?** (*Dreamlet mixed models*)
+4. **Which regulons change activity with disease severity?** (*Dreamlet linear mixed models*)
 5. **Do disease-associated DEGs concentrate in specific regulons?** (*Fisher's enrichment*)
 6. **How does the regulatory network topology change between conditions?** (*Network rewiring*)
 
