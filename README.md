@@ -2,7 +2,7 @@
 
 Gene regulatory network analysis of Alzheimer's disease and cognitive resilience in the PsychAD cohort.
 
-**Manuscript:** *TBDe*
+**Manuscript:** *TBD*
 
 ## Overview
 
@@ -158,6 +158,4 @@ psychad-grn-atlas/
 
 ## Citation
 
-> Spencer CS. *Decoding Gene Regulatory Programs of Resilience and Pathogenesis
-> in Alzheimer's Disease.* PhD Dissertation, [Institution], [Year].
 
