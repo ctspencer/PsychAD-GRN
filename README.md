@@ -1,4 +1,4 @@
-# PsychAD GRN Atlas
+# PsychAD GRN 
 
 Gene regulatory network analysis of Alzheimer's disease and cognitive resilience in the PsychAD cohort.
 
