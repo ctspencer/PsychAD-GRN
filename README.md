@@ -2,7 +2,7 @@
 
 Gene regulatory network analysis of Alzheimer's disease and cognitive resilience in the PsychAD cohort.
 
-**Dissertation:** *Decoding Gene Regulatory Programs of Resilience and Pathogenesis in Alzheimer's Disease*
+**Manuscript:** *TBDe*
 
 ## Overview
 
