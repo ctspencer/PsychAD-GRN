@@ -134,8 +134,9 @@ python -m psychad_grn.network_rewiring \
 ## Repository Structure
 
 ```
-psychad-grn-atlas/
-├── psychad_grn/
+PsychAD-GRN/
+├── psychad_grn/                # Core Python package
+│   ├── __init__.py
 │   ├── grn_inference.py        # Analysis 1: pySCENIC GRN construction
 │   ├── aucell_scoring.py       # Analysis 2: AUCell + concordance
 │   ├── regulon_specificity.py  # Analysis 3: RSS + RRA
@@ -143,6 +144,7 @@ psychad-grn-atlas/
 │   ├── fishers_enrichment.py   # Analysis 5: Fisher's exact test
 │   ├── network_rewiring.py     # Analysis 6: differential network
 │   └── utils/
+│       ├── __init__.py
 │       ├── io.py               # Data loading/saving
 │       ├── stats.py            # Statistical functions (z-score, RRA, Stouffer's)
 │       └── plotting.py         # Shared visualization functions
@@ -150,8 +152,12 @@ psychad-grn-atlas/
 │   └── dreamlet_analysis.R     # Standalone R script (dreamlet package)
 ├── configs/
 │   └── default_config.yaml     # All parameters and paths
-└── scripts/
-    └── run_pipeline.sh         # End-to-end pipeline runner
+├── scripts/
+│   └── run_pipeline.sh         # End-to-end pipeline runner
+├── environment.yml             # Conda environment specification
+├── requirements.txt            # Python dependencies
+├── pyproject.toml              # Python package configuration
+└── README.md
 ```
 
 ---
